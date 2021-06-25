@@ -520,7 +520,7 @@ fviz_nbclust(X2019_N_CMentalHealth[6:26], cluster::pam, method = "silhouette", d
   labs(subtitle = "Silhouette Method, 2019 Complete, Manhattan, PAM")
 # ^ 2
 
-fviz_nbclust(X2019_N_CMentalHealth[6:26], cluster::pam, nstart = 25, method = "gap_stat", nboot = 20, iter.max = 20)+
+fviz_nbclust(X2019_N_CMentalHealth[6:26], cluster::pam, nstart = 25, method = "gap_stat", nboot = 5)+
   labs(subtitle = "Gap statistic method, 2019 Complete, Euclidean, PAM")
 # ^ 
 fviz_nbclust(X2019_N_CMentalHealth[6:26], cluster::pam, nstart = 25,  diss = dist(X2019_N_CMentalHealth[6:26], method = "manhattan"),

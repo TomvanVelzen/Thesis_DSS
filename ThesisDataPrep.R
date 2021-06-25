@@ -760,14 +760,14 @@ summary(X2020_PCA_E)
 # Source: https://towardsdatascience.com/principal-component-analysis-pca-101-using-r-361f4c53a9ff
 
 # 2019 & 2020
-screeplot(X2019_PCA_C, type = "l", npcs = 15, main = "Screeplot of the first 15 PCs")
+screeplot(X2019_PCA_C, type = "b", npcs = 15, main = "Screeplot of the first 15 PCs")
 abline(h = 1, col="red", lty=5)
 legend("topright", legend=c("Eigenvalue = 1"),
        col=c("red"), lty=5, cex=0.6)
 Cumpro_2019 <- cumsum(X2019_PCA_C$sdev^2 / sum(X2019_PCA_C$sdev^2))
-plot(Cumpro_2019[0:15], xlab = "PC #", ylab = "Amount of explained variance", main = "Cumulative variance plot")
-abline(v = 5, col="blue", lty=5)
-abline(h = 0.62, col="blue", lty=5)
+plot(Cumpro_2019[0:15], xlab = "PC #", ylab = "Amount of explained variance", main = "Cumulative variance plot 2019")
+abline(v = 7, col="blue", lty=5)
+abline(h = 0.70, col="blue", lty=5)
 legend("bottomright", legend=c("Cut-off @ PC5"),
        col=c("blue"), lty=5, cex=0.6)
 
@@ -776,11 +776,11 @@ abline(h = 1, col="red", lty=5)
 legend("topright", legend=c("Eigenvalue = 1"),
        col=c("red"), lty=5, cex=0.6)
 Cumpro_2020 <- cumsum(X2020_PCA_C$sdev^2 / sum(X2020_PCA_C$sdev^2))
-plot(Cumpro_2020[0:15], xlab = "PC #", ylab = "Amount of explained variance", main = "Cumulative variance plot")
-abline(v = 5, col="blue", lty=5)
+plot(Cumpro_2020[0:15], xlab = "PC #", ylab = "Amount of explained variance", main = "Cumulative variance plot 2020")
+abline(v = 7, col="blue", lty=5)
 abline(v = 3, col= "red", lty=5 )
-abline(h = 0.515, col = "red", lty =5)
-abline(h = 0.635, col="blue", lty=5)
+abline(h = 0.7, col = "red", lty =5)
+abline(h = 0.7, col="blue", lty=5)
 legend("bottomright", legend=c("Cut-off @ PC5", "Cut-off @ PC3"),
        col=c("blue", "red"), lty=5, cex=0.6)
 
@@ -827,3 +827,91 @@ plot3d(compX_2019E$PC1, compX_2019E$PC2, compX_2019E$PC3, col = as.integer(compX
 # 2020
 compX_2020E <- data.frame(X2020_PCA_E$x[,1:21],X2020_EN_CMentalHealth$Ch20m178, X2020_EN_CMentalHealth$AgeCat)
 plot3d(compX_2020E$PC1, compX_2020E$PC2, compX_2020E$PC3, col = as.integer(compX_2020E$X2020_EN_CMentalHealth.Ch20m178))
+
+### Visualizing the PCA's
+library(ggbiplot)
+
+#Complete
+BIPLOT2019 <- ggbiplot(X2019_PCA_C, groups = X2019_CMentalHealth$Ch19l178, obs.scale = 1) + 
+                  labs(x = "PC1 (34.5% explained var.)", y = "PC2 (9.1% explained var.)", colour = "Medication") 
+                  + theme(legend.position = "none")
+BIPLOT2020 <- ggbiplot(X2020_PCA_C, groups = X2020_CMentalHealth$Ch20m178, obs.scale = 1) +
+                  labs(x = "PC1 (33.6% explained var.)", y = "PC2 (8.9% explained var.)", colour = "Medication")
+
+annotate_figure(ggarrange(BIPLOT2019, BIPLOT2020, nrow=1, ncol=2, align = "hv", common.legend = TRUE, legend = "right"), 
+                          top = "Scaling of Variables, Left = 2019, Right = 2020")
+
+#Youth
+BIPLOT_Y_2019 <- ggbiplot(X2019_PCA_Y, groups = X2019_YN_CMentalHealth$Ch19l178, obs.scale = 1) + 
+                  labs(x = "PC1 (33.1% explained var.)", y = "PC2(9.8% explained var.)", colour = "Medication") +
+                  xlim(-10, 7.5) +
+                  ylim(-10,6) 
+BIPLOT_Y_2020 <- ggbiplot(X2020_PCA_Y, groups = X2020_YN_CMentalHealth$Ch20m178, obs.scale = 1) + 
+                  labs(x = "PC1 (32.9% explained var.)", y = "PC2(9.4% explained var.)", colour = "Medication") +
+                  xlim(-10, 7.5) +
+                  ylim(-10,6)
+
+annotate_figure(ggarrange(BIPLOT_Y_2019, BIPLOT_Y_2020, nrow=1, ncol=2, align = "hv", common.legend = TRUE, legend = "right"), 
+                          top = "Scaling of Variables, Left = 2019, Right = 2020")
+
+#Elder
+BIPLOT_E_2019 <- ggbiplot(X2019_PCA_E, groups = X2019_EN_CMentalHealth$Ch19l178, obs.scale = 1) + 
+                  labs(x = "PC1 (32.5% explained var.)", y = "PC2(8.7% explained var.)", colour = "Medication") +
+                  xlim(-7, 12) +
+                  ylim(-7.5,7.5) 
+BIPLOT_E_2020 <- ggbiplot(X2020_PCA_E, groups = X2020_EN_CMentalHealth$Ch20m178, obs.scale = 1) + 
+                  labs(x = "PC1 (31.6% explained var.)", y = "PC2(8.7% explained var.)", colour = "Medication") +
+                  xlim(-7, 12) +
+                  ylim(-7.5,7.5)
+
+annotate_figure(ggarrange(BIPLOT_E_2019, BIPLOT_E_2020, nrow=1, ncol=2, align = "hv", common.legend = TRUE, legend = "right"), 
+                          top = "Scaling of Variables, Left = 2019, Right = 2020")
+
+### Visualizations of Scaling of the PC's
+
+#Complete
+PCAPLOT_2019 <- data.frame('Medication' = X2019_CMentalHealth$Ch19l178, X2019_PCA_C$x[,1:2])
+PCAPLOT_2020 <- data.frame('Medication' = X2020_CMentalHealth$Ch20m178, X2020_PCA_C$x[,1:2])
+
+BIPLOT20202 <- ggplot(data = PCAPLOT_2020) + 
+  geom_point(aes(x = PC1, y = PC2, col = Medication)) + 
+  theme_minimal() 
+BIPLOT20192 <- ggplot(data = PCAPLOT_2019) +
+  geom_point(aes(x = PC1, y = PC2, col = Medication)) +
+  theme_minimal()
+
+annotate_figure(ggarrange(BIPLOT20192, BIPLOT20202, nrow=2, ncol=1, align = "hv", common.legend = TRUE, legend = "bottom"), top = "Control Variable inside the PC plots. Top = 2019. Bottom = 2020")
+
+#Youth
+PCAPLOT_2019Y <- data.frame('Medication' = X2019_YN_CMentalHealth$Ch19l178, X2019_PCA_Y$x[,1:2])
+PCAPLOT_2020Y <- data.frame('Medication' = X2020_YN_CMentalHealth$Ch20m178, X2020_PCA_Y$x[,1:2])
+
+BIPLOT2020_Y <- ggplot(data = PCAPLOT_2020Y) + 
+  geom_point(aes(x = PC1, y = PC2, col = Medication)) + 
+  theme_minimal() +
+  xlim(-10, 7.5) +
+  ylim(-10, 6)
+BIPLOT2019_Y <- ggplot(data = PCAPLOT_2019Y) +
+  geom_point(aes(x = PC1, y = PC2, col = Medication)) +
+  theme_minimal() +
+  xlim(-10, 7.5) +
+  ylim(-10, 6)
+
+annotate_figure(ggarrange(BIPLOT2019_Y, BIPLOT2020_Y, nrow=2, ncol=1, align = "hv", common.legend = TRUE, legend = "bottom"), top = "Control Variable inside the 'Youth' PC plots. Top = 2019. Bottom = 2020")
+
+#Elder
+PCAPLOT_2019E <- data.frame('Medication' = X2019_EN_CMentalHealth$Ch19l178, X2019_PCA_E$x[,1:2])
+PCAPLOT_2020E <- data.frame('Medication' = X2020_EN_CMentalHealth$Ch20m178, X2020_PCA_E$x[,1:2])
+
+BIPLOT2020_E <- ggplot(data = PCAPLOT_2020E) + 
+  geom_point(aes(x = PC1, y = PC2, col = Medication)) + 
+  theme_minimal() +
+  xlim(-7, 12) +
+  ylim(-7.5, 7.5)
+BIPLOT2019_E <- ggplot(data = PCAPLOT_2019E) +
+  geom_point(aes(x = PC1, y = PC2, col = Medication)) +
+  theme_minimal() +
+  xlim(-7, 12) +
+  ylim(-7.5, 7.5)
+
+annotate_figure(ggarrange(BIPLOT2019_E, BIPLOT2020_E, nrow=2, ncol=1, align = "hv", common.legend = TRUE, legend = "bottom"), top = "Control Variable inside the 'Elder' PC plots. Top = 2019. Bottom = 2020")
